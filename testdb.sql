@@ -32,7 +32,7 @@ CREATE TABLE `user`  (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (4, '张小三', 'b123');
-INSERT INTO `user` VALUES (5, '王小', 'abcd');
+INSERT INTO `user` VALUES (5, '王小的', 'abcd');
 INSERT INTO `user` VALUES (7, '小明', '123');
 
 SET FOREIGN_KEY_CHECKS = 1;
