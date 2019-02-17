@@ -1,0 +1,95 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>添加客户</title>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/man.css" rel="stylesheet">
+    <style type="text/css">
+        table {
+            background-color: #CCCCCC;
+            border: 1px;
+            width: 100%;
+        }
+
+        table tr {
+            height: 20px;
+        }
+
+        table tr div {
+            text-align: right;
+        }
+
+        td font {
+            color: red;
+        }
+
+        .mylable {
+            color: red;
+            font-size: 12px;
+        }
+
+    </style>
+
+
+</head>
+<body>
+<div style="width:600px;">
+    <form name="client_form" action="/add.do" method="post" enctype="multipart/form-data">
+        <table>
+            <tr bgcolor="#f5f5f5">
+                <td>
+                    <div>
+                        <font>*</font> 头像:
+                    </div>
+                </td>
+                <td><input  type="file" name="headerimg" value="" size="30"></td>
+            
+            </tr>
+            <tr bgcolor="#f5f5f5">
+                <td>
+                    <div><font>*</font> 姓名:</div>
+                </td>
+                <td>
+                    <input id="clientname" type="text" name="clientname" value="" size="30" class="form-control mainT">
+                </td>
+            </tr>
+            <tr bgcolor="#f0f0f0">
+                <td>
+                    <div><font>*</font> 密码:</div>
+                </td>
+                <td><input id="password" type="password" name="password" value="" size="30" class="form-control"></td>
+
+            </tr>
+            <tr bgcolor="#f5f5f5">
+                <td></td>
+                <td colspan="2"><input type="submit" value="提交" class="btn btn-primary mainT">
+                    <input type="reset" value="重置" class="btn btn-primary mainT"></td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+<script src="js/jquery.js" type="text/javascript"></script>
+<!-- <script src="js/myajax.js" type="text/javascript"></script> -->
+<script>
+    $('#clientname').blur(function () {
+        $.ajax({
+            url: '/checkUser.do',
+            type: 'post',
+            data: 'username=' + $(this).val(),
+            dataType: "json", //预期的服务器响应的数据类型;  json  |  html/text
+            success: function (result) {
+                $('#msg').empty();
+                if (result.code === 1) {
+                    $('#clientname').after('<span id="msg" style="color:red; font-size:14px">' +
+                        result.msg + '</span>');
+                }
+            },
+            error: function (xhr, status, error) { //如果请求失败要运行的函数。
+                alert(error + "  " + status);
+            }
+        });
+    });
+</script>
+</body>
+</html>
