@@ -1,5 +1,6 @@
 var querydb = require('../utils/querydb');
 var util = require('../utils/util');
+var svgCaptcha = require('svg-captcha');
 var logger = require('log4js').getLogger(''); // 获取日志对象
 /**
  * 统一登录认证-拦截器
@@ -11,7 +12,7 @@ exports.all = function (req, res, next) {
         reqUrl = reqUrl.substring(0, reqUrl.lastIndexOf('?')); // /user/list/main.do
     }
     // 指定请求放行
-    if (reqUrl.endsWith('login.do') || reqUrl.endsWith('logout.do') || reqUrl.endsWith('/') || reqUrl === '') {
+    if (reqUrl.endsWith('login.do') || reqUrl.endsWith('logout.do') || reqUrl.endsWith('/') || reqUrl === '' || reqUrl.endsWith('codeImg.do')) {
         next(); // 放行
     } else {
         if (req.session.user) { // 登录认证
@@ -53,6 +54,14 @@ exports.loginsubmit = async function (req, res, next) {
     var userName = req.body.name;
     var passWord = req.body.password;
     var autoLogin = req.body.autoLogin;
+    var codeImg = req.body.code;
+    logger.debug(codeImg);
+    if(codeImg != req.session.captcha){
+        res.render('login', {
+            'message': '验证码出错！',
+        });
+        return;
+    }
 
     // md5加密password
     var psw = util.md5(passWord);
@@ -113,6 +122,23 @@ exports.main = function (req, res, next) {
     });
 
 };
+
+/**
+ * 验证码
+ */
+exports.codeImg = function (req, res, next) {
+    var codeConfig = {
+        size: 5,// 验证码长度
+        ignoreChars: '0o1i', // 验证码字符中排除 0o1i
+        noise: 4, // 干扰线条的数量
+        height: 44
+    }
+    var captcha = svgCaptcha.create(codeConfig);
+    req.session.captcha = captcha.text.toLowerCase(); //存session用于验证接口获取文字码
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.write(String(captcha.data));
+    res.end();
+}
 
 /**
  * 退出
